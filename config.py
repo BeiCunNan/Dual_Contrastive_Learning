@@ -7,15 +7,16 @@ import logging
 import argparse
 from datetime import datetime
 
+# 1
 
 def get_config():
     parser = argparse.ArgumentParser() # 参数解析器,类似一个容器
     num_classes = {'sst2': 2, 'subj': 2, 'trec': 6, 'pc': 2, 'cr': 2}
     ''' Base '''
     parser.add_argument('--data_dir', type=str, default='data')
-    parser.add_argument('--dataset', type=str, default='cr', choices=num_classes.keys())
+    parser.add_argument('--dataset', type=str, default='trec', choices=num_classes.keys())
     parser.add_argument('--model_name', type=str, default='bert', choices=['bert', 'roberta'])
-    parser.add_argument('--method', type=str, default='nl1a', choices=['ce', 'scl', 'dualcl','nl','nl1a','nl1b']) # CE为交叉熵、SCL为标准对比学习
+    parser.add_argument('--method', type=str, default='pos', choices=['ce', 'scl', 'dualcl','nl','nl1a','nl1b','nl2a','nl2b','nl3','pos']) # CE为交叉熵、SCL为标准对比学习
     ''' Optimization '''
     parser.add_argument('--train_batch_size', type=int, default=16)
     parser.add_argument('--test_batch_size', type=int, default=64)

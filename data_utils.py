@@ -9,6 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 # 数据加载读取+文本预处理+Bert模型处理
 # 获得Bert输出后的结果
 
+# 1
 
 class MyDataset(Dataset):
 

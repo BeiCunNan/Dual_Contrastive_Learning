@@ -2,10 +2,11 @@ import torch
 from tqdm import tqdm
 from model import Transformer
 from config import get_config
-from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b
+from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLoss, NewLoss2a, NewLoss2b, NewLoss3
 from data_utils import load_data
 from transformers import logging, AutoTokenizer, AutoModel
 
+# 1
 
 class Instructor:
 
@@ -106,6 +107,14 @@ class Instructor:
             criterion = NewLoss1a(self.args.alpha, self.args.temp)
         elif self.args.method == 'nl1b':
             criterion = NewLoss1b(self.args.alpha, self.args.temp)
+        elif self.args.method == 'nl2a':
+            criterion = NewLoss2a(self.args.alpha, self.args.temp)
+        elif self.args.method == 'nl2b':
+            criterion = NewLoss2b(self.args.alpha, self.args.temp)
+        elif self.args.method == 'nl3':
+            criterion = NewLoss3(self.args.alpha, self.args.temp)
+        elif self.args.method == 'pos':
+            criterion = PosLoss(self.args.alpha, self.args.temp)
         else:
             raise ValueError('unknown method')
         optimizer = torch.optim.AdamW(_params, lr=self.args.lr, weight_decay=self.args.decay)
