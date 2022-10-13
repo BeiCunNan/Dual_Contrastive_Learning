@@ -14,7 +14,7 @@ class MyDataset(Dataset):
 
     def __init__(self, raw_data, label_dict, tokenizer, model_name, method):
         # 如果是dualcl,就将label进行list操作
-        label_list = list(label_dict.keys()) if method not in ['ce', 'scl', 'nl'] else []
+        label_list = list(label_dict.keys()) if method not in ['ce', 'scl', 'nl','nl1a','nlab'] else []
         sep_token = ['[SEP]'] if model_name == 'bert' else ['</s>']
         dataset = list()
         # 数据读取和预处理
