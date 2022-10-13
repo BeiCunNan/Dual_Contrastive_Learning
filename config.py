@@ -13,13 +13,13 @@ def get_config():
     num_classes = {'sst2': 2, 'subj': 2, 'trec': 6, 'pc': 2, 'cr': 2}
     ''' Base '''
     parser.add_argument('--data_dir', type=str, default='data')
-    parser.add_argument('--dataset', type=str, default='sst2', choices=num_classes.keys())
+    parser.add_argument('--dataset', type=str, default='cr', choices=num_classes.keys())
     parser.add_argument('--model_name', type=str, default='bert', choices=['bert', 'roberta'])
     parser.add_argument('--method', type=str, default='nl1a', choices=['ce', 'scl', 'dualcl','nl','nl1a','nl1b']) # CE为交叉熵、SCL为标准对比学习
     ''' Optimization '''
     parser.add_argument('--train_batch_size', type=int, default=16)
     parser.add_argument('--test_batch_size', type=int, default=64)
-    parser.add_argument('--num_epoch', type=int, default=100)
+    parser.add_argument('--num_epoch', type=int, default=30)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--decay', type=float, default=0.01) # 衰变率
     parser.add_argument('--alpha', type=float, default=0.5)
