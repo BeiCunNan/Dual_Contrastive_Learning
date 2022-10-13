@@ -219,14 +219,14 @@ class NewLoss1a(SupConLoss):
         return ce_loss + cl_loss_1 + cl_loss_2
 
 
-class NewLoss1b():
-    def __init__(self, alpha, temp):
+class NewLoss1b(nn.Module):
+    def __init__(self, alpha1b, temp1b):
         super().__init__()
-        self.xent_loss = nn.CrossEntropyLoss()
-        self.alpha = alpha
-        self.temp = temp
+        self.xent_loss1b = nn.CrossEntropyLoss()
+        self.alpha1b = alpha1b
+        self.temp1b = temp1b
 
-    def nt_xent_loss(self, anchor1, anchor2, target1, target2, labels):
+    def nt_xent_loss1b(self, anchor1, anchor2, target1, target2, labels):
         with torch.no_grad():
             labels = labels.unsqueeze(-1)
             mask = torch.eq(labels, labels.transpose(0, 1))
@@ -234,8 +234,8 @@ class NewLoss1b():
             mask = mask ^ torch.diag_embed(torch.diag(mask))
 
         # compute logits
-        anchor1_dot_target1 = torch.einsum('bd,cd->bc', anchor1, target1) / self.temp
-        anchor2_dot_target2 = torch.einsum('bd,cd->bc', anchor2, target2) / self.temp
+        anchor1_dot_target1 = torch.einsum('bd,cd->bc', anchor1, target1) / self.temp1b
+        anchor2_dot_target2 = torch.einsum('bd,cd->bc', anchor2, target2) / self.temp1b
         anchor_dot_target = (anchor1_dot_target1 + anchor2_dot_target2) / 2
 
         # delete diag elem
@@ -263,9 +263,12 @@ class NewLoss1b():
                                                                                                                 normed_label_feats.size(
                                                                                                                     -1))).squeeze(
             1)
-        ce_loss = (1 - self.alpha) * self.xent_loss(outputs['predicts'], targets)
-        nl_loss = self.alpha * self.nt_xent_loss(normed_cls_feats, normed_pos_label_feats, normed_cls_feats,
+
+        ce_loss = (1 - self.alpha1b) * self.xent_loss1b(outputs['predicts'], targets)
+
+        nl_loss = self.alpha1b * self.nt_xent_loss1b(normed_cls_feats, normed_pos_label_feats, normed_cls_feats,
                                                  normed_pos_label_feats, targets)
+
         return ce_loss + nl_loss
 
 
@@ -296,10 +299,10 @@ class NewLoss2a(SupConLoss):
         return ce_loss + dual_loss_1 + dual_loss_2 + cl_loss_1 + cl_loss_2
 
 
-class NewLoss2b():
+class NewLoss2b(nn.Module):
     def __init__(self, alpha, temp):
         super().__init__()
-        self.xent_loss = nn.CrossEntropyLoss()
+        self.xent_loss = torch.nn.CrossEntropyLoss()
         self.alpha = alpha
         self.temp = temp
 
@@ -351,6 +354,7 @@ class NewLoss2b():
 
         return ce_loss + nl2b_loss_1 + nl2b_loss_2
 
+
 class NewLoss3(nn.Module):
 
     def __init__(self, alpha, temp):
@@ -367,23 +371,10 @@ class NewLoss3(nn.Module):
             mask = mask ^ torch.diag_embed(torch.diag(mask))
         # compute logits
         anchor_dot_target = torch.einsum('bd,cd->bc', anchor, target) / self.temp
-        # delete diag elem
-        anchor_dot_target = anchor_dot_target - torch.diag_embed(torch.diag(anchor_dot_target))
-        # for numerical stability
-        logits_max, _ = torch.max(anchor_dot_target, dim=1, keepdim=True)
-        logits = anchor_dot_target - logits_max.detach()
-        # compute log prob
-        exp_logits = torch.exp(logits)
-        # mask out positives
-        logits = logits * mask
-        log_prob = logits - torch.log(exp_logits.sum(dim=1, keepdim=True) + 1e-12)
-        # in case that mask.sum(1) is zero
-        mask_sum = mask.sum(dim=1)
-        mask_sum = torch.where(mask_sum == 0, torch.ones_like(mask_sum), mask_sum)
-        # compute log-likelihood
-        pos_logits = (mask * log_prob).sum(dim=1) / mask_sum.detach()
-        loss = -1 * pos_logits.mean()
-        return loss
+        labels = torch.diag(anchor_dot_target)
+        loss_1 = self.xent_loss(anchor_dot_target, labels, axis=0)
+        loss_2 = self.xent_loss(anchor_dot_target, labels, axis=1)
+        return loss_1 + loss_2
 
     def forward(self, outputs, targets):
         normed_cls_feats = F.normalize(outputs['cls_feats'], dim=-1)
@@ -393,6 +384,6 @@ class NewLoss3(nn.Module):
                                                                                                                     -1))).squeeze(
             1)
         ce_loss = (1 - self.alpha) * self.xent_loss(outputs['predicts'], targets)
-        cl_loss_1 = 0.5 * self.alpha * self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
-        cl_loss_2 = 0.5 * self.alpha * self.nt_xent_loss(normed_cls_feats, normed_pos_label_feats, targets)
-        return ce_loss + cl_loss_1 + cl_loss_2
+        cl_loss_1 = self.alpha * self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
+        return ce_loss + cl_loss_1
+
