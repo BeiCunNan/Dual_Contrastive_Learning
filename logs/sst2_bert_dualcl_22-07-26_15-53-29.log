@@ -1,0 +1,37 @@
+> creating model bert
+> cuda memory allocated: 439076352
+> training arguments:
+>>> data_dir: data
+>>> dataset: sst2
+>>> model_name: bert
+>>> method: dualcl
+>>> train_batch_size: 16
+>>> test_batch_size: 64
+>>> num_epoch: 100
+>>> lr: 1e-05
+>>> decay: 0.01
+>>> alpha: 0.5
+>>> temp: 0.1
+>>> backend: False
+>>> timestamp: 1658822009911
+>>> device: cuda
+>>> num_classes: 2
+>>> log_name: sst2_bert_dualcl_22-07-26_15-53-29.log
+1/100 - 1.00%
+[train] loss: 1.6959, acc: 76.76
+[test] loss: 2.2142, acc: 89.02
+2/100 - 2.00%
+[train] loss: 1.5019, acc: 89.04
+[test] loss: 2.1885, acc: 90.23
+3/100 - 3.00%
+[train] loss: 1.4613, acc: 92.86
+[test] loss: 2.1812, acc: 91.27
+4/100 - 4.00%
+[train] loss: 1.4303, acc: 95.37
+[test] loss: 2.1960, acc: 90.50
+5/100 - 5.00%
+[train] loss: 1.4032, acc: 97.58
+[test] loss: 2.2049, acc: 91.05
+6/100 - 6.00%
+[train] loss: 1.3867, acc: 98.39
+[test] loss: 2.2016, acc: 90.83
