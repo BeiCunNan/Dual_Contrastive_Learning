@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -369,11 +370,16 @@ class NewLoss3(nn.Module):
             mask = torch.eq(labels, labels.transpose(0, 1))
             # delete diag elem
             mask = mask ^ torch.diag_embed(torch.diag(mask))
+
         # compute logits
         anchor_dot_target = torch.einsum('bd,cd->bc', anchor, target) / self.temp
-        labels = torch.diag(anchor_dot_target)
-        loss_1 = self.xent_loss(anchor_dot_target, labels)
-        loss_2 = self.xent_loss(anchor_dot_target.transpose(0, 1), labels)
+        adt_length=anchor_dot_target.size(0)
+        tt = torch.tensor(np.arange(anchor_dot_target.size(0))).view(adt_length).long().cuda()
+
+        loss_1 = self.xent_loss(anchor_dot_target, tt)
+
+        loss_2 = self.xent_loss(anchor_dot_target.transpose(0, 1), tt)
+
         return loss_1 + loss_2
 
     def forward(self, outputs, targets):
@@ -383,6 +389,7 @@ class NewLoss3(nn.Module):
                                                                                                                 normed_label_feats.size(
                                                                                                                     -1))).squeeze(
             1)
+
         ce_loss = (1 - self.alpha) * self.xent_loss(outputs['predicts'], targets)
         cl_loss_1 = self.alpha * self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
         return ce_loss + cl_loss_1
