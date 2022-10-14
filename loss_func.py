@@ -372,8 +372,8 @@ class NewLoss3(nn.Module):
         # compute logits
         anchor_dot_target = torch.einsum('bd,cd->bc', anchor, target) / self.temp
         labels = torch.diag(anchor_dot_target)
-        loss_1 = self.xent_loss(anchor_dot_target, labels, axis=0)
-        loss_2 = self.xent_loss(anchor_dot_target, labels, axis=1)
+        loss_1 = self.xent_loss(anchor_dot_target, labels)
+        loss_2 = self.xent_loss(anchor_dot_target.transpose(0, 1), labels)
         return loss_1 + loss_2
 
     def forward(self, outputs, targets):
