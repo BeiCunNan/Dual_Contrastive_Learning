@@ -2,7 +2,8 @@ import torch
 from tqdm import tqdm
 from model import Transformer
 from config import get_config
-from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLoss, NewLoss2a, NewLoss2b, NewLoss3
+from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLoss, NewLoss2a, NewLoss2b, \
+    NewLoss3a, NewLoss3b
 from data_utils import load_data
 from transformers import logging, AutoTokenizer, AutoModel
 
@@ -111,8 +112,10 @@ class Instructor:
             criterion = NewLoss2a(self.args.alpha, self.args.temp)
         elif self.args.method == 'nl2b':
             criterion = NewLoss2b(self.args.alpha, self.args.temp)
-        elif self.args.method == 'nl3':
-            criterion = NewLoss3(self.args.alpha, self.args.temp)
+        elif self.args.method == 'nl3a':
+            criterion = NewLoss3a(self.args.alpha, self.args.temp)
+        elif self.args.method == 'nl3b':
+            criterion = NewLoss3b(self.args.alpha, self.args.temp)
         elif self.args.method == 'pos':
             criterion = PosLoss(self.args.alpha, self.args.temp)
         else:

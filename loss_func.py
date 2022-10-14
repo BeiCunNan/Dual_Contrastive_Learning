@@ -356,7 +356,7 @@ class NewLoss2b(nn.Module):
         return ce_loss + nl2b_loss_1 + nl2b_loss_2
 
 
-class NewLoss3(nn.Module):
+class NewLoss3a(nn.Module):
 
     def __init__(self, alpha, temp):
         super().__init__()
@@ -393,4 +393,41 @@ class NewLoss3(nn.Module):
         ce_loss = (1 - self.alpha) * self.xent_loss(outputs['predicts'], targets)
         cl_loss_1 = self.alpha * self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
         return ce_loss + cl_loss_1
+
+class NewLoss3b(nn.Module):
+
+    def __init__(self, alpha, temp):
+        super().__init__()
+        self.xent_loss = nn.CrossEntropyLoss()
+        self.alpha = alpha
+        self.temp = temp
+
+    def nt_xent_loss(self, anchor, target, labels):
+        with torch.no_grad():
+            labels = labels.unsqueeze(-1)
+            mask = torch.eq(labels, labels.transpose(0, 1))
+            # delete diag elem
+            mask = mask ^ torch.diag_embed(torch.diag(mask))
+
+        # compute logits
+        anchor_dot_target = torch.einsum('bd,cd->bc', anchor, target) / self.temp
+        adt_length=anchor_dot_target.size(0)
+        tt = torch.tensor(np.arange(anchor_dot_target.size(0))).view(adt_length).long().cuda()
+
+        loss_1 = self.xent_loss(anchor_dot_target, tt)
+
+        loss_2 = self.xent_loss(anchor_dot_target.transpose(0, 1), tt)
+
+        return loss_1 + loss_2
+
+    def forward(self, outputs, targets):
+        normed_cls_feats = F.normalize(outputs['cls_feats'], dim=-1)
+        normed_label_feats = F.normalize(outputs['label_feats'], dim=-1)
+        normed_pos_label_feats = torch.gather(normed_label_feats, dim=1, index=targets.reshape(-1, 1, 1).expand(-1, 1,
+                                                                                                                normed_label_feats.size(
+                                                                                                                    -1))).squeeze(
+            1)
+
+        cl_loss_1 = self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
+        return cl_loss_1
 
