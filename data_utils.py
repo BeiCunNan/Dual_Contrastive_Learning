@@ -6,7 +6,7 @@ from functools import partial
 from torch.utils.data import Dataset, DataLoader
 
 
-# 数据加载读取+文本预处理+Bert模型处理
+# 数据加载读取+文本预处理
 # 获得Bert输出后的结果
 
 # 1
@@ -78,11 +78,15 @@ def load_data(dataset, data_dir, tokenizer, train_batch_size, test_batch_size, m
     elif dataset == 'subj':
         train_data = json.load(open(os.path.join(data_dir, 'SUBJ_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'SUBJ_Test.json'), 'r', encoding='utf-8'))
-        label_dict = {'subjective': 0, 'objective': 1}
+        label_dict = {'subjective': 0, 'objec tive': 1}
     elif dataset == 'pc':
         train_data = json.load(open(os.path.join(data_dir, 'procon_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'procon_Test.json'), 'r', encoding='utf-8'))
         label_dict = {'positive': 0, 'negative': 1}
+    elif dataset == 'sst5':
+        train_data = json.load(open(os.path.join(data_dir, 'SST5_Train.json'), 'r', encoding='utf-8'))
+        test_data = json.load(open(os.path.join(data_dir, 'SST5_Test.json'), 'r', encoding='utf-8'))
+        label_dict = {'one': 1, 'two': 2,'three': 3,'four':4,'five':5}
     else:
         raise ValueError('unknown dataset')
 
