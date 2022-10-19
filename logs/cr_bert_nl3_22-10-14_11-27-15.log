@@ -1,0 +1,19 @@
+> creating model bert
+> cuda memory allocated: 439076352
+> training arguments:
+>>> data_dir: data
+>>> dataset: cr
+>>> model_name: bert
+>>> method: nl3
+>>> train_batch_size: 16
+>>> test_batch_size: 64
+>>> num_epoch: 30
+>>> lr: 1e-05
+>>> decay: 0.01
+>>> alpha: 0.5
+>>> temp: 0.1
+>>> backend: False
+>>> timestamp: 1665718035375
+>>> device: cuda
+>>> num_classes: 2
+>>> log_name: cr_bert_nl3_22-10-14_11-27-15.log

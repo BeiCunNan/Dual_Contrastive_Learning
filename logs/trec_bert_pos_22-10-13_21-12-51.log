@@ -1,0 +1,111 @@
+> creating model bert
+> cuda memory allocated: 439088640
+> training arguments:
+>>> data_dir: data
+>>> dataset: trec
+>>> model_name: bert
+>>> method: pos
+>>> train_batch_size: 16
+>>> test_batch_size: 64
+>>> num_epoch: 30
+>>> lr: 1e-05
+>>> decay: 0.01
+>>> alpha: 0.5
+>>> temp: 0.1
+>>> backend: False
+>>> timestamp: 1665666771409
+>>> device: cuda
+>>> num_classes: 6
+>>> log_name: trec_bert_pos_22-10-13_21-12-51.log
+1/30 - 3.33%
+[train] loss: 2.7895, acc: 20.82
+[test] loss: 2.8004, acc: 52.80
+2/30 - 6.67%
+[train] loss: 2.0987, acc: 36.15
+[test] loss: 2.1685, acc: 71.80
+3/30 - 10.00%
+[train] loss: 1.2967, acc: 72.62
+[test] loss: 1.5528, acc: 92.20
+4/30 - 13.33%
+[train] loss: 0.9024, acc: 87.51
+[test] loss: 1.4517, acc: 95.00
+5/30 - 16.67%
+[train] loss: 0.7323, acc: 92.53
+[test] loss: 1.4630, acc: 95.60
+6/30 - 20.00%
+[train] loss: 0.6611, acc: 94.86
+[test] loss: 1.4420, acc: 96.00
+7/30 - 23.33%
+[train] loss: 0.5982, acc: 96.68
+[test] loss: 1.4849, acc: 96.20
+8/30 - 26.67%
+[train] loss: 0.5827, acc: 97.40
+[test] loss: 1.4871, acc: 96.60
+9/30 - 30.00%
+[train] loss: 0.5479, acc: 98.00
+[test] loss: 1.5786, acc: 93.60
+10/30 - 33.33%
+[train] loss: 0.5408, acc: 98.28
+[test] loss: 1.4866, acc: 96.40
+11/30 - 36.67%
+[train] loss: 0.5399, acc: 98.61
+[test] loss: 1.5636, acc: 96.40
+12/30 - 40.00%
+[train] loss: 0.5261, acc: 98.68
+[test] loss: 1.5363, acc: 96.60
+13/30 - 43.33%
+[train] loss: 0.5210, acc: 98.79
+[test] loss: 1.6177, acc: 95.60
+14/30 - 46.67%
+[train] loss: 0.5036, acc: 99.34
+[test] loss: 1.5692, acc: 96.20
+15/30 - 50.00%
+[train] loss: 0.5045, acc: 99.45
+[test] loss: 1.5975, acc: 97.20
+16/30 - 53.33%
+[train] loss: 0.5032, acc: 99.39
+[test] loss: 1.6171, acc: 96.80
+17/30 - 56.67%
+[train] loss: 0.4968, acc: 99.54
+[test] loss: 1.4809, acc: 97.60
+18/30 - 60.00%
+[train] loss: 0.5039, acc: 99.16
+[test] loss: 1.5765, acc: 96.60
+19/30 - 63.33%
+[train] loss: 0.4981, acc: 99.47
+[test] loss: 1.6314, acc: 96.40
+20/30 - 66.67%
+[train] loss: 0.5016, acc: 99.60
+[test] loss: 1.4705, acc: 97.20
+21/30 - 70.00%
+[train] loss: 0.4915, acc: 99.82
+[test] loss: 1.4652, acc: 97.80
+22/30 - 73.33%
+[train] loss: 0.4921, acc: 99.69
+[test] loss: 1.6094, acc: 96.40
+23/30 - 76.67%
+[train] loss: 0.4939, acc: 99.76
+[test] loss: 1.5564, acc: 96.60
+24/30 - 80.00%
+[train] loss: 0.5003, acc: 99.65
+[test] loss: 1.6177, acc: 96.80
+25/30 - 83.33%
+[train] loss: 0.4815, acc: 99.96
+[test] loss: 1.5999, acc: 97.00
+26/30 - 86.67%
+[train] loss: 0.5072, acc: 99.56
+[test] loss: 1.5466, acc: 96.40
+27/30 - 90.00%
+[train] loss: 0.5080, acc: 99.56
+[test] loss: 1.4820, acc: 97.20
+28/30 - 93.33%
+[train] loss: 0.4889, acc: 99.80
+[test] loss: 1.5174, acc: 97.60
+29/30 - 96.67%
+[train] loss: 0.4943, acc: 99.80
+[test] loss: 1.4847, acc: 97.40
+30/30 - 100.00%
+[train] loss: 0.4818, acc: 99.85
+[test] loss: 1.5274, acc: 97.60
+best loss: 1.4652, best acc: 97.80
+log saved: trec_bert_pos_22-10-13_21-12-51.log
