@@ -8,7 +8,7 @@ import pandas as pd
 PATH = "E:\data\yelp_review_full_csv\\train.csv"
 dict={"1":"one","2":"two","3":"three","4":"four","5":"five"}
 
-df = pd.read_csv(PATH)
+df = pd.read_csv(PATH,encoding="iso-8859-1")
 
 result = []
 for index in range(len(df)):

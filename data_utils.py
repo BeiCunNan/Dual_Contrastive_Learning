@@ -86,11 +86,32 @@ def load_data(dataset, data_dir, tokenizer, train_batch_size, test_batch_size, m
     elif dataset == 'sst5':
         train_data = json.load(open(os.path.join(data_dir, 'SST5_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'SST5_Test.json'), 'r', encoding='utf-8'))
-        label_dict = {'one': 1, 'two': 2,'three': 3,'four':4,'five':5}
+        label_dict = {'one': 0, 'two': 1, 'three': 2, 'four': 3, 'five': 4}
+    elif dataset == 'yelp5':
+        train_data = json.load(open(os.path.join(data_dir, 'Yelp5_Train.json'), 'r', encoding='utf-8'))
+        test_data = json.load(open(os.path.join(data_dir, 'Yelp5_Test.json'), 'r', encoding='utf-8'))
+        train_data = train_data[:int(len(train_data) * 0.01)]
+        test_data = test_data[:int(len(test_data) * 0.01)]
+        label_dict = {'one': 0, 'two': 1, 'three': 2, 'four': 3, 'five': 4}
+    elif dataset == 'dp':
+        train_data = json.load(open(os.path.join(data_dir, 'DP_Train.json'), 'r', encoding='utf-8'))
+        test_data = json.load(open(os.path.join(data_dir, 'DP_Test.json'), 'r', encoding='utf-8'))
+        train_data = train_data[:int(len(train_data) * 0.01)]
+        test_data = test_data[:int(len(test_data) * 0.01)]
+        label_dict = {"company": 0, "educationalInstitution": 1, "artist": 2, "athlete": 3, "officeholder": 4,
+                      "meanoftransportation": 5, "building": 6, "naturalplace": 7, "village": 8,
+                      "animal": 9, "plant": 10, "album": 11, "film": 12, "writtenwork": 13}
+    elif dataset == 'ag':
+        train_data = json.load(open(os.path.join(data_dir, 'AG_Train.json'), 'r', encoding='utf-8'))
+        test_data = json.load(open(os.path.join(data_dir, 'AG_Test.json'), 'r', encoding='utf-8'))
+        train_data = train_data[:int(len(train_data) * 0.01)]
+        test_data = test_data[:int(len(test_data) * 0.01)]
+        label_dict = {"world": 0, "sports": 1, "business": 2, "scitech": 3}
     else:
         raise ValueError('unknown dataset')
 
     # 2 预处理标签和文本,将其放到Dataset（类似于数据库）中
+
     trainset = MyDataset(train_data, label_dict, tokenizer, model_name, method)
     testset = MyDataset(test_data, label_dict, tokenizer, model_name, method)
 

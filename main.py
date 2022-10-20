@@ -7,8 +7,8 @@ from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLos
 from data_utils import load_data
 from transformers import logging, AutoTokenizer, AutoModel
 
-# 1
 
+# 1
 class Instructor:
 
     def __init__(self, args, logger):
