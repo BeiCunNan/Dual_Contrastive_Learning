@@ -47,9 +47,11 @@ class Instructor:
             # 调整文本输入、文本标签、输出值、损失函数
             # inputs 得到是dataloader中text_ids的返回值,即:input_ids,token_type_ids,attention_mask
             inputs = {k: v.to(self.args.device) for k, v in inputs.items()}
+            # print('train_inputs',inputs['input_ids'].shape)
             targets = targets.to(self.args.device)
             # 使用该训练模型
             outputs = self.model(inputs)
+            # print(outputs['predicts'],outputs['predicts'].shape)
             # outputs 为字典类型,包括predicts,clas_feats,label_feats
             # targets 为torch.Size([16])预测类别的最终数据
             loss = criterion(outputs, targets)

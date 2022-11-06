@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+AG_Test.json filter=lfs diff=lfs merge=lfs -text
+AG_n.json filter=lfs diff=lfs merge=lfs -text
+data/AG_Test.json filter=lfs diff=lfs merge=lfs -text

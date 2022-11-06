@@ -14,7 +14,6 @@ class CELoss(nn.Module):
     def forward(self, outputs, targets):
         return self.xent_loss(outputs['predicts'], targets)
 
-
 # 输入情况
 # anchor锚点 [16,768]
 # target [16,768]
@@ -272,7 +271,6 @@ class NewLoss1b(nn.Module):
 
         return ce_loss + nl_loss
 
-
 class NewLoss2a(SupConLoss):
 
     def __init__(self, alpha, temp):
@@ -430,4 +428,5 @@ class NewLoss3b(nn.Module):
 
         cl_loss_1 = self.nt_xent_loss(normed_pos_label_feats, normed_cls_feats, targets)
         return cl_loss_1
+
 

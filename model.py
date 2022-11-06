@@ -16,8 +16,18 @@ class Transformer(nn.Module):
 
     def forward(self, inputs):
         # Bert operations1
+        # print('ooooooooo',inputs['input_ids'].shape)
+
+        # Bert 一共有四种输出
+        # last_hidden_state最后一层隐藏层所有单词的token值
+        # pooler_output 序列第一个token的最后一层隐层状态,也就是CLS
+        # hidden_states 不重要！
+        # attentions 不重要！
+        # 因此获取CLS的方法有两个,pooler_output or last_hidden_state[0,:]
         raw_outputs = self.base_model(**inputs)
         hiddens = raw_outputs.last_hidden_state  # last_hidden_state(batch_size,sequence_length,hidden_size),sequence_length为句子长度,hidden_size统一为768,输出如[16,15,768]
+        # hiddens[:,0,:] 原始CLS
+        # raw_outputs.pooler_output CLS+FNN+Tanh
         cls_feats = hiddens[:, 0, :]  # 获取句子表示CLS
 
         if self.method in ['ce', 'scl']:

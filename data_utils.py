@@ -16,13 +16,14 @@ class MyDataset(Dataset):
     def __init__(self, raw_data, label_dict, tokenizer, model_name, method):
         # 如果是dualcl,就将label进行list操作
         label_list = list(label_dict.keys()) if method not in ['ce', 'scl', 'nl'] else []
-        sep_token = ['[SEP]'] if model_name == 'bert' else ['</s>']
+        sep_token = ['[SEP]']
         dataset = list()
         # 数据读取和预处理
         for data in raw_data:
             tokens = data['text'].lower().split(' ')  # 将文本都转化为小写字母并按照空格来分隔,但是保留了标点符号
             label_id = label_dict[data['label']]  # 获取数字形式的标签id
             dataset.append((label_list + sep_token + tokens, label_id))
+        # print('-----', len(dataset))
         self._dataset = dataset
 
     # 如果是ce和scl方法,直接获得某索引的文本tokens和标签id
@@ -45,6 +46,8 @@ def my_collate(batch, tokenizer, method, num_classes):
     # tokens 为标签+文本，如['abbreviation', 'numeric', 'entity', 'human', 'location', 'description', '[SEP]', 'what', 'can', 'be', 'done', 'about', 'snoring', '?']
     # text_ids 为tokens化后的结果,包含input_ids,token_type_ids,attention_mask
     # 使用bert对文本实现序列化
+    # Token 将根据字典为每个单词得到其唯一的下标,因此Token化后的inpu_ids是一个一维的句子
+    # Bert 是根据input_ids生成每个单词的token,因此它是一个二维单词集合
     text_ids = tokenizer(tokens,
                          padding=True,
                          truncation=True,
@@ -55,9 +58,11 @@ def my_collate(batch, tokenizer, method, num_classes):
     # Dualcl中所有position_ids的内容为[0*类个数+0到结尾]如'position_ids': tensor([[ 0,  0,  0,  0,  0,  0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,
     #          12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
     if method not in ['ce', 'scl']:
+        # 标签位置不需要位置预测,因此将其全部设置为0
         positions = torch.zeros_like(text_ids['input_ids'])
         positions[:, num_classes:] = torch.arange(0, text_ids['input_ids'].size(1) - num_classes)
         text_ids['position_ids'] = positions
+
     return text_ids, torch.tensor(label_ids)
 
 
@@ -78,7 +83,7 @@ def load_data(dataset, data_dir, tokenizer, train_batch_size, test_batch_size, m
     elif dataset == 'subj':
         train_data = json.load(open(os.path.join(data_dir, 'SUBJ_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'SUBJ_Test.json'), 'r', encoding='utf-8'))
-        label_dict = {'subjective': 0, 'objec tive': 1}
+        label_dict = {'subjective': 0, 'objective': 1}
     elif dataset == 'pc':
         train_data = json.load(open(os.path.join(data_dir, 'procon_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'procon_Test.json'), 'r', encoding='utf-8'))
@@ -99,19 +104,21 @@ def load_data(dataset, data_dir, tokenizer, train_batch_size, test_batch_size, m
         train_data = train_data[:int(len(train_data) * 0.01)]
         test_data = test_data[:int(len(test_data) * 0.01)]
         label_dict = {"company": 0, "educationalInstitution": 1, "artist": 2, "athlete": 3, "officeholder": 4,
-                      "meanoftransportation": 5, "building": 6, "naturalplace": 7, "village": 8,
+                      "meanoftransportation": 5, "building": 6, "naturalpla ce": 7, "village": 8,
                       "animal": 9, "plant": 10, "album": 11, "film": 12, "writtenwork": 13}
     elif dataset == 'ag':
         train_data = json.load(open(os.path.join(data_dir, 'AG_Train.json'), 'r', encoding='utf-8'))
         test_data = json.load(open(os.path.join(data_dir, 'AG_Test.json'), 'r', encoding='utf-8'))
         train_data = train_data[:int(len(train_data) * 0.01)]
         test_data = test_data[:int(len(test_data) * 0.01)]
-        label_dict = {"world": 0, "sports": 1, "business": 2, "scitech": 3}
+        label_dict = {"world": 0, "sports": 1, "business": 2, "technology": 3}
     else:
         raise ValueError('unknown dataset')
 
     # 2 预处理标签和文本,将其放到Dataset（类似于数据库）中
 
+    print('ltr',len(train_data))
+    print('lte',len(test_data))
     trainset = MyDataset(train_data, label_dict, tokenizer, model_name, method)
     testset = MyDataset(test_data, label_dict, tokenizer, model_name, method)
 

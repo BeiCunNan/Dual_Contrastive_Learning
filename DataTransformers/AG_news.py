@@ -5,8 +5,8 @@ import re
 import numpy as np
 import pandas as pd
 
-PATH = "E:\data\\ag_news_csv\\test.csv"
-dict = {"1": "world", "2": "sports", "3": "business", "4": "scitech"}
+PATH = "E:\data\\ag_news_csv\\train.csv"
+dict = {"1": "world", "2": "sports", "3": "business", "4": "technology"}
 
 df = pd.read_csv(PATH, encoding="iso-8859-1")
 
@@ -27,5 +27,5 @@ for index in range(len(df)):
         }
     result.append(item)
 
-with open('../data/AG_Test.json', 'w') as w:
+with open('../data/AG_Train.json', 'w') as w:
     json.dump(result, w)

@@ -15,8 +15,8 @@ def get_config():
     num_classes = {'sst2': 2, 'subj': 2, 'trec': 6, 'pc': 2, 'cr': 2, 'sst5': 5, 'yelp5': 5, "dp": 14, "ag": 4}
     ''' Base '''
     parser.add_argument('--data_dir', type=str, default='data')
-    parser.add_argument('--dataset', type=str, default='dp', choices=num_classes.keys())
-    parser.add_argument('--model_name', type=str, default='bert', choices=['bert', 'roberta'])
+    parser.add_argument('--dataset', type=str, default='subj', choices=num_classes.keys())
+    parser.add_argument('--model_name', type=str, default='roberta', choices=['bert', 'roberta'])
     parser.add_argument('--method', type=str, default='nl2b',
                         choices=['ce', 'scl', 'dualcl', 'nl', 'nl1a', 'nl1b', 'nl2a', 'nl2b', 'nl3a', 'nl3b',
                                  'pos'])  # CE为交叉熵、SCL为标准对比学习
@@ -28,12 +28,13 @@ def get_config():
     parser.add_argument('--decay', type=float, default=0.01)  # 衰变率
     parser.add_argument('--alpha', type=float, default=0.5)
     parser.add_argument('--temp', type=float, default=0.1)
+
     ''' Environment '''
     parser.add_argument('--backend', default=False,
                         action='store_true')  # 触发工具,若使用了backend,则python config.py返回值为true,反之为false
     parser.add_argument('--timestamp', type=int, default='{:.0f}{:03}'.format(time.time(), random.randint(0, 999)))
     parser.add_argument('--device', type=str,
-                        default='cpu')  # parser.add_argument('--device', type=str, default='cuda' )
+                        default='cuda')  # parser.add_argument('--device', type=str, default='cuda' )
 
     args = parser.parse_args()  # 创建parser实例,将所有参数返回该实例中
     args.num_classes = num_classes[args.dataset]  # 因为是dict类型,不太方便放到add_argument中，因此需要将其单独放出来
