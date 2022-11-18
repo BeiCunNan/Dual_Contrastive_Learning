@@ -16,7 +16,7 @@ def get_config():
     ''' Base '''
     parser.add_argument('--data_dir', type=str, default='data')
     parser.add_argument('--dataset', type=str, default='subj', choices=num_classes.keys())
-    parser.add_argument('--model_name', type=str, default='roberta', choices=['bert', 'roberta'])
+    parser.add_argument('--model_name', type=str, default='roberta', choices=['bert', 'roberta','wsp'])
     parser.add_argument('--method', type=str, default='nl2b',
                         choices=['ce', 'scl', 'dualcl', 'nl', 'nl1a', 'nl1b', 'nl2a', 'nl2b', 'nl3a', 'nl3b',
                                  'pos'])  # CE为交叉熵、SCL为标准对比学习

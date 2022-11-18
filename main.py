@@ -21,6 +21,9 @@ class Instructor:
         elif args.model_name == 'roberta':
             self.tokenizer = AutoTokenizer.from_pretrained('roberta-base', add_prefix_space=True)
             base_model = AutoModel.from_pretrained('roberta-base')
+        elif args.model_name == 'wsp':
+            self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+            base_model = AutoModel.from_pretrained("shuaifan/SentiWSP-base")
         else:
             raise ValueError('unknown model')
         # 使用了什么预训练模型和什么损失函数方法来解决几分类的问题
