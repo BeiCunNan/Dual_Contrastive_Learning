@@ -6,6 +6,7 @@ from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLos
     NewLoss3a, NewLoss3b
 from data_utils import load_data
 from transformers import logging, AutoTokenizer, AutoModel
+import matplotlib.pyplot as plt
 
 
 # 1
@@ -128,9 +129,11 @@ class Instructor:
         optimizer = torch.optim.AdamW(_params, lr=self.args.lr, weight_decay=self.args.decay)
         best_loss, best_acc = 0, 0
 
+        l_acc, l_epo = [], []
         for epoch in range(self.args.num_epoch):
             train_loss, train_acc = self._train(train_dataloader, criterion, optimizer)
             test_loss, test_acc = self._test(test_dataloader, criterion)
+            l_epo.append(epoch), l_acc.append(test_acc)
             if test_acc > best_acc or (test_acc == best_acc and test_loss < best_loss):
                 best_acc, best_loss = test_acc, test_loss
             self.logger.info(
@@ -139,6 +142,10 @@ class Instructor:
             self.logger.info('[test] loss: {:.4f}, acc: {:.2f}'.format(test_loss, test_acc * 100))
         self.logger.info('best loss: {:.4f}, best acc: {:.2f}'.format(best_loss, best_acc * 100))
         self.logger.info('log saved: {}'.format(self.args.log_name))
+        plt.plot(l_epo, l_acc)
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.show()
 
 
 if __name__ == '__main__':
