@@ -145,7 +145,9 @@ class Instructor:
         plt.plot(l_epo, l_acc)
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
+        plt.savefig('image.png')
         plt.show()
+
 
 
 if __name__ == '__main__':
