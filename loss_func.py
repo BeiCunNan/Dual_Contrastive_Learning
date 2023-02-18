@@ -101,6 +101,7 @@ class SupConLoss(nn.Module):
 class DualLoss(SupConLoss):
 
     def __init__(self, alpha, temp):
+
         super().__init__(alpha, temp)
 
     def forward(self, outputs, targets):
