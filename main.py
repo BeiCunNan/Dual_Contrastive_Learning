@@ -5,7 +5,7 @@ from config import get_config
 from loss_func import CELoss, SupConLoss, DualLoss, NewLoss1a, NewLoss1b, PosLoss, NewLoss2a, NewLoss2b, \
     NewLoss3a, NewLoss3b
 from data_utils import load_data
-from transformers import logging, AutoTokenizer, AutoModel
+from transformers import logging, AutoTokenizer, AutoModel, get_linear_schedule_with_warmup
 import matplotlib.pyplot as plt
 
 
@@ -21,7 +21,7 @@ class Instructor:
             base_model = AutoModel.from_pretrained('bert-base-uncased')
         elif args.model_name == 'roberta':
             self.tokenizer = AutoTokenizer.from_pretrained('roberta-base', add_prefix_space=True)
-            base_model = AutoModel.from_pretrained('roberta-base')
+            base_model =  AutoModel.from_pretrained("shuaifan/SentiWSP")
         elif args.model_name == 'wsp':
             self.tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
             base_model = AutoModel.from_pretrained("shuaifan/SentiWSP-base")
@@ -42,7 +42,7 @@ class Instructor:
             self.logger.info(f">>> {arg}: {getattr(self.args, arg)}")
 
     # 开始训练
-    def _train(self, dataloader, criterion, optimizer):
+    def _train(self, dataloader, criterion, optimizer,scheduler):
         train_loss, n_correct, n_train = 0, 0, 0
 
         # 开启训练模式
@@ -64,6 +64,7 @@ class Instructor:
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            scheduler.step()
 
             # 统计训练、预测集的损失率、准确率
             train_loss += loss.item() * targets.size(0)
@@ -127,11 +128,19 @@ class Instructor:
         else:
             raise ValueError('unknown method')
         optimizer = torch.optim.AdamW(_params, lr=self.args.lr, weight_decay=self.args.decay)
+
+        # Warm up
+        total_steps = len(train_dataloader) * self.args.num_epoch
+        warmup_steps = 0.6 * len(train_dataloader)
+        scheduler =get_linear_schedule_with_warmup(optimizer,
+                                                    num_warmup_steps=warmup_steps,  # Default value in run_glue.py
+                                                    num_training_steps=total_steps)
+
         best_loss, best_acc = 0, 0
 
         l_acc, l_epo = [], []
         for epoch in range(self.args.num_epoch):
-            train_loss, train_acc = self._train(train_dataloader, criterion, optimizer)
+            train_loss, train_acc = self._train(train_dataloader, criterion, optimizer,scheduler)
             test_loss, test_acc = self._test(test_dataloader, criterion)
             l_epo.append(epoch), l_acc.append(test_acc)
             if test_acc > best_acc or (test_acc == best_acc and test_loss < best_loss):
